@@ -5,8 +5,6 @@
 
 #include "CGame.h"
 #include "CIO/CFile.h"
-#include "CIO/CMenu.h"
-#include "CIO/CWindow.h"
 #include "CMap.h"
 #include "CSurface.h"
 #include "SGE/sge_blib.h"
@@ -19,7 +17,6 @@
 
 bool CGame::ReCreateWindow()
 {
-    suppressResizeEvents_ = 3;
     displayTexture_.reset();
     renderer_.reset();
     window_.reset();
@@ -28,33 +25,28 @@ bool CGame::ReCreateWindow()
                                    fullscreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE));
     if(!window_)
         return false;
+    // Don't allow shrinking below the smallest resolution we have a dedicated map frame for
+    SDL_SetWindowMinimumSize(window_.get(), 640, 480);
     renderer_.reset(SDL_CreateRenderer(window_.get(), -1, 0));
     if(!renderer_)
         return false;
-    RecreateDisplayResources();
-    if(!displayTexture_ || !Surf_Display)
+    if(!ResizeDisplay(GameResolution))
         return false;
 
     SetAppIcon();
     return true;
 }
 
-void CGame::RecreateDisplayResources()
+bool CGame::ResizeDisplay(Extent newSize)
 {
-    displayTexture_.reset();
-    displayTexture_ = makeSdlTexture(renderer_, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, GameResolution.x,
-                                     GameResolution.y);
-    Surf_Display = makeRGBSurface(GameResolution.x, GameResolution.y, true);
-}
-
-void CGame::UpdateDisplaySize(const Extent& newSize)
-{
+    // Ignore degenerate sizes, e.g. while the window is minimized
+    if(newSize.x == 0 || newSize.y == 0)
+        return true;
     GameResolution = newSize;
-    RecreateDisplayResources();
-    for(auto& menu : Menus)
-        menu->resetSurface();
-    for(auto& wnd : Windows)
-        wnd->resetSurface();
+    displayTexture_ =
+      makeSdlTexture(renderer_, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, newSize.x, newSize.y);
+    Surf_Display = makeRGBSurface(newSize.x, newSize.y, true);
+    return displayTexture_ && Surf_Display;
 }
 
 bool CGame::Init()

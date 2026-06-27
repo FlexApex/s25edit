@@ -56,7 +56,8 @@ public:
     static Uint32 GetPixel(SDL_Surface* surface, Position pos);
     static void DrawTriangleField(SDL_Surface* display, const DisplayRectangle& displayRect, const bobMAP& myMap);
     static void DrawTriangle(SDL_Surface* display, const DisplayRectangle& displayRect, const bobMAP& myMap,
-                             MapType type, const MapNode& P1, const MapNode& P2, const MapNode& P3);
+                             MapType type, const MapNode& P1, const MapNode& P2, const MapNode& P3,
+                             Point32 tileOffset = Point32(0, 0));
 
     static void get_nodeVectors(bobMAP& myMap);
     static void update_shading(bobMAP& myMap, Position pos);

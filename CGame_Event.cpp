@@ -63,14 +63,7 @@ void CGame::EventHandling(SDL_Event* Event)
 
             switch(Event->key.keysym.sym)
             {
-                case SDLK_RETURN:
-                case SDLK_KP_ENTER:
-                    if(Event->key.keysym.mod & KMOD_ALT)
-                    {
-                        fullscreen = !fullscreen;
-                        SaveSettings();
-                    }
-                    break;
+                case SDLK_F2: fullscreen = !fullscreen; break;
 
 #ifdef _ADMINMODE
                 case SDLK_F3: // if CTRL and ALT are pressed
@@ -84,12 +77,12 @@ void CGame::EventHandling(SDL_Event* Event)
 #endif
                 // F5 - F7 is ZOOM, F5 = zoom in, F6 = normal view, F7 = zoom out
                 case SDLK_F5:
-                    if(triangleIncrease < ZOOM_INCREASE_MAX && MapObj->getMap())
+                    if(TRIANGLE_INCREASE < 10 && MapObj->getMap())
                     {
                         callback::PleaseWait(INITIALIZING_CALL);
-                        triangleHeight += ZOOM_STEP_HEIGHT;
-                        triangleWidth += ZOOM_STEP_WIDTH;
-                        triangleIncrease += ZOOM_STEP_INCREASE;
+                        TRIANGLE_HEIGHT += 5;
+                        TRIANGLE_WIDTH += 11;
+                        TRIANGLE_INCREASE += 1;
                         bobMAP* myMap = MapObj->getMap();
                         myMap->updateVertexCoords();
                         CSurface::get_nodeVectors(*myMap);
@@ -101,9 +94,9 @@ void CGame::EventHandling(SDL_Event* Event)
                     if(MapObj->getMap())
                     {
                         callback::PleaseWait(INITIALIZING_CALL);
-                        triangleHeight = TRIANGLE_HEIGHT_DEFAULT;
-                        triangleWidth = TRIANGLE_WIDTH_DEFAULT;
-                        triangleIncrease = TRIANGLE_INCREASE_DEFAULT;
+                        TRIANGLE_HEIGHT = 28;
+                        TRIANGLE_WIDTH = 56;
+                        TRIANGLE_INCREASE = 5;
                         bobMAP* myMap = MapObj->getMap();
                         myMap->updateVertexCoords();
                         CSurface::get_nodeVectors(*myMap);
@@ -112,12 +105,12 @@ void CGame::EventHandling(SDL_Event* Event)
                 }
                 break;
                 case SDLK_F7:
-                    if(triangleIncrease > ZOOM_INCREASE_MIN && MapObj->getMap())
+                    if(TRIANGLE_INCREASE > 1 && MapObj->getMap())
                     {
                         callback::PleaseWait(INITIALIZING_CALL);
-                        triangleHeight -= ZOOM_STEP_HEIGHT;
-                        triangleWidth -= ZOOM_STEP_WIDTH;
-                        triangleIncrease -= ZOOM_STEP_INCREASE;
+                        TRIANGLE_HEIGHT -= 5;
+                        TRIANGLE_WIDTH -= 11;
+                        TRIANGLE_INCREASE -= 1;
                         bobMAP* myMap = MapObj->getMap();
                         myMap->updateVertexCoords();
                         CSurface::get_nodeVectors(*myMap);
@@ -386,14 +379,13 @@ void CGame::EventHandling(SDL_Event* Event)
 
         case SDL_WINDOWEVENT:
         {
-            if(Event->window.event == SDL_WINDOWEVENT_RESIZED)
+            // Follow user-driven window resizing/maximizing by growing the editor's working area, just like the
+            // game client does. The map view and menus re-derive their surfaces from GameResolution.
+            if(Event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED && !fullscreen)
             {
-                if(suppressResizeEvents_ > 0)
-                {
-                    suppressResizeEvents_--;
-                    break; // Skip stale event from our own window recreation
-                }
-                UpdateDisplaySize(Extent(Event->window.data1, Event->window.data2));
+                const Extent newSize(Event->window.data1, Event->window.data2);
+                if(newSize != GameResolution)
+                    ResizeDisplay(newSize);
             }
             break;
         }
