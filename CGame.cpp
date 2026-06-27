@@ -308,6 +308,7 @@ int main(int argc, char* argv[])
     }
 
     global::gameDataFilePath = RTTRCONFIG.ExpandPath("<RTTR_GAME>");
+    global::userdataPath = RTTRCONFIG.ExpandPath("<RTTR_USERDATA>");
     // Prefer application folder over user folder
     global::userMapsPath = RTTRCONFIG.ExpandPath("WORLDS");
     if(!checkWriteable(global::userMapsPath))

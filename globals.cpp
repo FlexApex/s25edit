@@ -17,6 +17,7 @@ CGame* global::s2;
 
 boost::filesystem::path global::gameDataFilePath(".");
 boost::filesystem::path global::userMapsPath;
+boost::filesystem::path global::userdataPath;
 WorldDescription global::worldDesc;
 
 unsigned char triangleHeight = TRIANGLE_HEIGHT_DEFAULT;

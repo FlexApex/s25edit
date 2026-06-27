@@ -28,6 +28,8 @@ extern CGame* s2;
 extern boost::filesystem::path gameDataFilePath;
 // Path where maps will be stored (must not be empty!)
 extern boost::filesystem::path userMapsPath;
+// Root of the RTTR user data folder (e.g. ~/.s25rttr); used as the starting point of the load browser
+extern boost::filesystem::path userdataPath;
 extern WorldDescription worldDesc;
 } // namespace global
 
