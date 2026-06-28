@@ -51,4 +51,11 @@ constexpr unsigned char ZOOM_STEP_INCREASE = 1;
 constexpr unsigned char ZOOM_INCREASE_MAX = 9;
 constexpr unsigned char ZOOM_INCREASE_MIN = 1;
 
+// Uppercase aliases for the mutable zoom globals (used in rendering and event code)
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+#define TRIANGLE_HEIGHT   triangleHeight
+#define TRIANGLE_WIDTH    triangleWidth
+#define TRIANGLE_INCREASE triangleIncrease
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
 extern Uint8 gouData[3][256][256];

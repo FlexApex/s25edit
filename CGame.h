@@ -8,6 +8,7 @@
 #include "CIO/CFont.h"
 #include "SdlSurface.h"
 #include <Point.h>
+#include <boost/filesystem/path.hpp>
 #include <memory>
 #include <vector>
 
@@ -42,6 +43,7 @@ private:
     CFont lastFps;
 
     Uint32 lastFrameTime = 0;
+    int suppressResizeEvents_ = 0;
 
     // structure for mouse cursor
     struct
@@ -77,6 +79,9 @@ public:
     /// Resize the render target (display surface + texture) to the given size, e.g. after the user resized or maximized
     /// the window. Keeps the existing window and renderer, so it is cheap enough to call while dragging the border.
     bool ResizeDisplay(Extent newSize);
+    void enterEditor(const boost::filesystem::path& filepath);
+    void LoadSettings();
+    void SaveSettings() const;
 
     void EventHandling(SDL_Event* Event);
 
